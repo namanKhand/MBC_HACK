@@ -1,20 +1,18 @@
 [package]
-name = "ticketing"
+name = "culture_passport"
 version = "0.1.0"
 edition = "2021"
-description = "EventGuard ticketing program"
 
 [lib]
 crate-type = ["cdylib", "lib"]
-name = "ticketing"
+name = "culture_passport"
 
 [features]
-default = []
 no-entrypoint = []
 no-idl = []
-cpi = ["no-entrypoint"]
+no-log-ix-name = []
+default = []
 
 [dependencies]
 anchor-lang = { workspace = true }
 anchor-spl = { workspace = true }
-culture_passport = { path = "../culture_passport", features = ["cpi"] }
