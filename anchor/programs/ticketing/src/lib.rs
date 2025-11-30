@@ -7,6 +7,35 @@ declare_id!("Tktjg6i8KibGCQjB7UBPYfL5b87ZExPsg1p7u111111");
 
 // Trusted oracle responsible for submitting Polymarket resolutions.
 const ORACLE_PUBKEY: &str = "PolyMrktOracle111111111111111111111111111";
+use anchor_spl::token::{self, Mint, Token, TokenAccount, Transfer};
+
+declare_id!("Fg6PaFpoGXkYsidMpWxTWqkQhvgLNvZx2dVYUx1mDLk");
+
+/// Fixed maximum sizes for string fields to derive account space.
+const MAX_NAME_LEN: usize = 100;
+const MAX_VENUE_LEN: usize = 100;
+
+/// Account discriminator (8) + serialized fields.
+pub const EVENT_SIZE: usize = 8
+    + 32 // authority
+    + 4 + MAX_NAME_LEN // name (Anchor string prefix + bytes)
+    + 8 // event_date
+    + 4 + MAX_VENUE_LEN // venue
+    + 4 // total_tickets
+    + 4 // tickets_sold
+    + 8 // ticket_price
+    + 32 // usdc_mint
+    + 32 // usdc_vault
+    + 1; // bump
+
+pub const TICKET_SIZE: usize = 8
+    + 32 // event
+    + 32 // owner
+    + 4 // ticket_id
+    + 8 // purchase_price
+    + 8 // purchase_time
+    + 1 // checked_in
+    + 1; // bump
 
 #[program]
 pub mod ticketing {
@@ -140,6 +169,10 @@ pub struct CreateEvent<'info> {
     #[account(mut)]
     pub authority: Signer<'info>,
     #[account(init, payer = authority, space = 8 + Event::MAX_SIZE)]
+pub struct InitializeEvent<'info> {
+    #[account(mut)]
+    pub organizer: Signer<'info>,
+    #[account(init, payer = organizer, space = 8 + Event::LEN)]
     pub event: Account<'info, Event>,
     pub system_program: Program<'info, System>,
 }
@@ -148,6 +181,7 @@ pub struct CreateEvent<'info> {
 pub struct BuyTicket<'info> {
     #[account(mut)]
     pub buyer: Signer<'info>,
+    #[account(mut)]
     pub event: Account<'info, Event>,
     #[account(
         init,
@@ -226,6 +260,19 @@ impl Event {
         + 1 // refund percentage
         + 1 // market_resolved
         + 1; // resolution_triggered_refund
+    pub organizer: Pubkey,
+    pub ticket_price: u64,
+    pub max_tickets: u64,
+    pub tickets_sold: u64,
+    // Rules configuration
+    pub max_resale_markup_bps: u16,
+    pub transfer_lock_start: i64,
+    pub max_tickets_per_wallet: u8,
+    pub transfers_enabled: bool,
+}
+
+impl Event {
+    pub const LEN: usize = 32 + 8 + 8 + 8 + 2 + 8 + 1 + 1;
 }
 
 #[account]
@@ -235,6 +282,8 @@ pub struct Ticket {
     pub purchase_price: u64,
     pub checked_in: bool,
     pub refund_claimed: bool,
+    pub ticket_id: u64,
+    pub purchase_price: u64,
     pub bump: u8,
 }
 
@@ -288,4 +337,70 @@ pub enum TicketingError {
     RefundAlreadyClaimed,
     #[msg("Math overflow")] 
     Overflow,
+    pub const LEN: usize = 32 + 32 + 8 + 8 + 1;
+}
+
+#[error_code]
+pub enum TicketingError {
+    #[msg("Event has sold out")]
+    EventSoldOut,
+    #[msg("Arithmetic overflow")]
+    Overflow,
+    #[msg("Caller is not the ticket owner")]
+    TicketOwnershipMismatch,
+    #[msg("Transfers are currently disabled")]
+    TransfersDisabled,
+    #[msg("Transfer window is locked")]
+    TransferLocked,
+    #[msg("Resale price exceeds maximum allowed markup")]
+    PriceCapExceeded,
+    #[msg("Wallet has reached maximum ticket limit for this event")]
+    WalletLimitExceeded,
+    /// Buyer's USDC token account used to pay for the ticket.
+    #[account(mut, constraint = buyer_usdc.owner == buyer.key(), constraint = buyer_usdc.mint == event.usdc_mint)]
+    pub buyer_usdc: Account<'info, TokenAccount>,
+    /// Event's USDC vault PDA receiving the proceeds.
+    #[account(mut, constraint = event_usdc_vault.key() == event.usdc_vault, constraint = event_usdc_vault.mint == event.usdc_mint)]
+    pub event_usdc_vault: Account<'info, TokenAccount>,
+    pub usdc_mint: Account<'info, Mint>,
+    pub token_program: Program<'info, Token>,
+    pub system_program: Program<'info, System>,
+}
+
+/// Event metadata and financial configuration.
+#[account]
+pub struct Event {
+    pub authority: Pubkey,      // Event organizer
+    pub name: String,           // Event name (max 100 chars)
+    pub event_date: i64,        // Unix timestamp
+    pub venue: String,          // Venue name (max 100 chars)
+    pub total_tickets: u32,     // Total ticket supply
+    pub tickets_sold: u32,      // Current tickets sold
+    pub ticket_price: u64,      // Price in USDC (lamports)
+    pub usdc_mint: Pubkey,      // USDC token mint
+    pub usdc_vault: Pubkey,     // Event's USDC vault PDA
+    pub bump: u8,               // PDA bump seed
+}
+
+/// Ticket instance tying ownership to an event.
+#[account]
+pub struct Ticket {
+    pub event: Pubkey,          // Reference to event
+    pub owner: Pubkey,          // Current owner
+    pub ticket_id: u32,         // Unique ticket ID within event
+    pub purchase_price: u64,    // Original purchase price
+    pub purchase_time: i64,     // Unix timestamp of purchase
+    pub checked_in: bool,       // Check-in status
+    pub bump: u8,               // PDA bump seed
+}
+
+/// Custom error codes for ticketing operations.
+#[error_code]
+pub enum TicketingError {
+    #[msg("Event is sold out")]
+    SoldOut,
+    #[msg("Invalid ticket owner")]
+    InvalidOwner,
+    #[msg("Ticket already checked in")]
+    AlreadyCheckedIn,
 }

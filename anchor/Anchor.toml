@@ -1,13 +1,18 @@
 [programs.localnet]
 CulturePassport = "Cul3iuoYiNw4UsVTNff7kwh28ykVfoCkbKzjLx11111"
 Ticketing = "Tktjg6i8KibGCQjB7UBPYfL5b87ZExPsg1p7u111111"
+ticketing = "TickeT111111111111111111111111111111111111"
+ticketing = "Fg6PaFpoGXkYsidMpWxTWqkQhvgLNvZx2dVYUx1mDLk"
 
 [registry]
 url = "https://api.apr.dev"
 
+[scripts]
+test = "pnpm test"
 [provider]
 cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
 test = "pnpm test"
+test = "ts-mocha -p tsconfig.json -t 1000000 tests/**/*.test.ts"

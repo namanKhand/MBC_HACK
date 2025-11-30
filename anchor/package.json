@@ -1,18 +1,17 @@
 {
-  "name": "mbc_hack-anchor",
-  "version": "1.0.0",
+  "name": "ticketing",
+  "version": "0.1.0",
   "scripts": {
-    "test": "mocha -t 1000000 anchor/tests/**/*.ts"
-  },
-  "dependencies": {
-    "@coral-xyz/anchor": "^0.29.0",
-    "@solana/web3.js": "^1.89.0",
-    "@solana/spl-token": "^0.3.11",
-    "chai": "^4.3.7",
-    "mocha": "^10.2.0"
+    "test": "ts-mocha -p tsconfig.json -t 1000000 tests/**/*.test.ts"
   },
   "devDependencies": {
-    "ts-node": "^10.9.1",
-    "typescript": "^5.2.2"
+    "@coral-xyz/anchor": "^0.29.0",
+    "@solana/spl-token": "^0.4.5",
+    "@solana/web3.js": "^1.91.4",
+    "chai": "^4.3.10",
+    "mocha": "^10.2.0",
+    "ts-mocha": "^10.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
   }
 }
