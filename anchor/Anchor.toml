@@ -1,0 +1,8 @@
+[programs.localnet]
+ticketing = "TickeT111111111111111111111111111111111111"
+
+[registry]
+url = "https://api.apr.dev"
+
+[scripts]
+test = "pnpm test"
