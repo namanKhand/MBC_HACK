@@ -1,3 +1,9 @@
 [workspace]
-members = ["programs/ticketing"]
+members = [
+    "programs/*"
+]
 resolver = "2"
+
+[workspace.dependencies]
+anchor-lang = "0.29.0"
+anchor-spl = "0.29.0"

@@ -1,14 +1,13 @@
 {
   "compilerOptions": {
     "target": "es2020",
-    "lib": ["es2020", "dom"],
     "module": "commonjs",
-    "moduleResolution": "node",
+    "lib": ["es2020", "dom"],
     "strict": true,
     "esModuleInterop": true,
+    "skipLibCheck": true,
     "types": ["mocha"],
-    "resolveJsonModule": true,
-    "outDir": "dist"
+    "resolveJsonModule": true
   },
   "include": ["tests/**/*"]
 }

@@ -1,0 +1,8 @@
+[workspace]
+members = [
+    "programs/ticketing",
+    "programs/culture_passport",
+]
+
+[workspace.dependencies]
+anchor-lang = "0.30.1"
