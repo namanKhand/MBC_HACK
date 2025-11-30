@@ -1,9 +1,12 @@
 [programs.localnet]
+ticketing = "TickeT111111111111111111111111111111111111"
 ticketing = "Fg6PaFpoGXkYsidMpWxTWqkQhvgLNvZx2dVYUx1mDLk"
 
 [registry]
 url = "https://api.apr.dev"
 
+[scripts]
+test = "pnpm test"
 [provider]
 cluster = "localnet"
 wallet = "~/.config/solana/id.json"
