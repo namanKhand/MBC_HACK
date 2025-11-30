@@ -1,0 +1,12 @@
+[workspace]
+members = [
+    "programs/culture_passport",
+    "programs/ticketing"
+]
+
+[workspace.dependencies]
+anchor-lang = { version = "0.29.0", features = ["init-if-needed"] }
+anchor-spl = "0.29.0"
+
+[workspace.package]
+edition = "2021"

@@ -1,0 +1,13 @@
+[programs.localnet]
+CulturePassport = "Cul3iuoYiNw4UsVTNff7kwh28ykVfoCkbKzjLx11111"
+Ticketing = "Tktjg6i8KibGCQjB7UBPYfL5b87ZExPsg1p7u111111"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "localnet"
+wallet = "~/.config/solana/id.json"
+
+[scripts]
+test = "pnpm test"

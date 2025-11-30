@@ -1,0 +1,18 @@
+[package]
+name = "culture_passport"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "culture_passport"
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+default = []
+
+[dependencies]
+anchor-lang = { workspace = true }
+anchor-spl = { workspace = true }
