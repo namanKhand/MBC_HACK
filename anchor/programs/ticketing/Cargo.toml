@@ -1,0 +1,19 @@
+[package]
+name = "ticketing"
+version = "0.1.0"
+edition = "2021"
+description = "EventGuard ticketing program"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "ticketing"
+
+[features]
+default = []
+no-entrypoint = []
+no-idl = []
+cpi = ["no-entrypoint"]
+
+[dependencies]
+anchor-lang = { workspace = true }
+anchor-spl = { workspace = true }
