@@ -1,0 +1,18 @@
+[features]
+seeds = true
+skip-lint = false
+
+[programs.devnet]
+ticketing = "Fg6PaFpoGXkYsidMpWxTWqPb1qhjcN1cN5i1gW7o4ciF"
+culture_passport = "H3cRhZvzYQ7WvyaManEXZDV4SSQSSHqzPaWY5AvzkdxD"
+
+[registry]
+url = "https://anchor.projectserum.com"
+
+[provider]
+cluster = "devnet"
+wallet = "~/.config/solana/id.json"
+
+ts-node = "ts-node"
+
+tests = "tests"
